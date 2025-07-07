@@ -3,72 +3,123 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>streamsmart</title>
+<title>StreamSmart</title>
 <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 <style>
-  .hidden { display: none; }
+body {
+  background-color: #141414;
+  color: #fff;
+  font-family: Arial, sans-serif;
+}
+header {
+  background-color: #111;
+}
+.show-card {
+  background-color: #222;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+.show-card:hover {
+  transform: scale(1.05);
+}
+.episode-card {
+  background-color: #333;
+  cursor: pointer;
+}
+.focused {
+  background-color: black;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
 </style>
 </head>
-<body class="bg-gray-900 text-white">
-  <header class="bg-gray-800 p-4 text-center text-2xl font-bold">StreamBox</header>
-  <div class="p-4 flex space-x-4 justify-center">
-    <button onclick="show('home')" class="btn">Home</button>
-    <button onclick="show('spongebob')" class="btn">SpongeBob</button>
-    <button onclick="show('scientist')" class="btn">The Scientist</button>
+<body>
+<header class="p-4 text-center text-3xl font-bold text-red-600">StreamSmart</header>
+
+<main id="home" class="p-6 grid gap-6 md:grid-cols-3">
+  <div onclick="show('spongebob')" class="show-card p-4 rounded">
+    <h2 class="text-xl font-semibold">SpongeBob SquarePants</h2>
+    <p>Underwater comedy adventures.</p>
   </div>
+  <div onclick="show('scientist')" class="show-card p-4 rounded">
+    <h2 class="text-xl font-semibold">The Scientist Who Went Wrong</h2>
+    <p>A tale of genius and madness.</p>
+  </div>
+  <div onclick="show('evilgenius')" class="show-card p-4 rounded">
+    <h2 class="text-xl font-semibold">Evil Genius</h2>
+    <p>A shocking true story.</p>
+  </div>
+</main>
 
-  <main id="home" class="p-6">
-    <div class="grid gap-6 md:grid-cols-2">
-      <div class="bg-gray-700 p-4 rounded">
-        <h2 class="text-xl font-semibold">SpongeBob SquarePants</h2>
-        <p>Join SpongeBob and friends in their hilarious underwater adventures.</p>
-      </div>
-      <div class="bg-gray-700 p-4 rounded">
-        <h2 class="text-xl font-semibold">The Scientist Who Went Wrong</h2>
-        <p>A dark tale of genius and madness.</p>
-      </div>
-    </div>
-  </main>
+<main id="spongebob" class="p-6 hidden space-y-4">
+  <h2 class="text-2xl font-bold text-red-500">SpongeBob SquarePants</h2>
+  <div onclick="play('spongebob',1)" class="episode-card p-4 rounded">Episode 1: Help Wanted / Reef Blower / Tea at the Treedome</div>
+  <div onclick="play('spongebob',2)" class="episode-card p-4 rounded">Episode 2: Bubblestand</div>
+  <div onclick="play('spongebob',3)" class="episode-card p-4 rounded">Episode 3: Plankton!</div>
+  <button onclick="backHome()" class="text-red-400 hover:underline mt-4">← Back to Home</button>
+</main>
 
-  <main id="spongebob" class="p-6 hidden space-y-4">
-    <h2 class="text-2xl font-bold">SpongeBob SquarePants</h2>
-    <div>
-      <button onclick="playEp('spongebob',1)" class="block bg-gray-700 p-4 rounded w-full text-left">Episode 1: Help Wanted / Reef Blower / Tea at the Treedome</button>
-      <button onclick="playEp('spongebob',2)" class="block bg-gray-700 p-4 rounded w-full text-left">Episode 2: Bubblestand</button>
-      <button onclick="playEp('spongebob',3)" class="block bg-gray-700 p-4 rounded w-full text-left">Episode 3: Plankton!</button>
-    </div>
-    <button onclick="show('home')" class="text-blue-400 hover:underline">← Back to Home</button>
-    <div id="spongebob-video" class="mt-6"></div>
-  </main>
+<main id="scientist" class="p-6 hidden space-y-4">
+  <h2 class="text-2xl font-bold text-red-500">The Scientist Who Went Wrong</h2>
+  <div onclick="play('scientist',1)" class="episode-card p-4 rounded">Episode 1</div>
+  <div onclick="play('scientist',2)" class="episode-card p-4 rounded">Episode 2</div>
+  <button onclick="backHome()" class="text-red-400 hover:underline mt-4">← Back to Home</button>
+</main>
 
-  <main id="scientist" class="p-6 hidden space-y-4">
-    <h2 class="text-2xl font-bold">The Scientist Who Went Wrong</h2>
-    <button onclick="playEp('scientist',1)" class="block bg-gray-700 p-4 rounded w-full text-left">Episode 1</button>
-    <button onclick="show('home')" class="text-blue-400 hover:underline">← Back to Home</button>
-    <div id="scientist-video" class="mt-6"></div>
-  </main>
+<main id="evilgenius" class="p-6 hidden space-y-4">
+  <h2 class="text-2xl font-bold text-red-500">Evil Genius</h2>
+  <div onclick="play('evilgenius',1)" class="episode-card p-4 rounded">Movie</div>
+  <button onclick="backHome()" class="text-red-400 hover:underline mt-4">← Back to Home</button>
+</main>
+
+<div id="focused" class="hidden"></div>
 
 <script>
-  function show(id) {
-    ['home','spongebob','scientist'].forEach(s=>document.getElementById(s).classList.add('hidden'));
-    document.getElementById(id).classList.remove('hidden');
+function hideAll() {
+  document.getElementById('home').classList.add('hidden');
+  document.getElementById('spongebob').classList.add('hidden');
+  document.getElementById('scientist').classList.add('hidden');
+  document.getElementById('evilgenius').classList.add('hidden');
+  document.getElementById('focused').classList.add('hidden');
+}
+function backHome() {
+  hideAll();
+  document.getElementById('home').classList.remove('hidden');
+}
+function show(show) {
+  hideAll();
+  document.getElementById(show).classList.remove('hidden');
+}
+function play(show, ep) {
+  hideAll();
+  const focused = document.getElementById('focused');
+  focused.className = 'focused';
+  let content = `<button onclick="backHome()" class="text-red-500 text-xl mb-4">← Back</button>`;
+  let url = '';
+  if (show === 'spongebob') {
+    const urls = {
+      1: 'https://dn721600.ca.archive.org/0/items/please-stand-by-video-effect_202409/SpongeBob%20SquarePants%20Season%201%20Episode%201%20Help%20Wanted%20%E2%80%93%20Reef%20Blower%20%E2%80%93%20Tea%20at%20the%20Treedome%20-%20SpongeBob%20SquarePants.mp4',
+      2: 'https://ia804603.us.archive.org/12/items/please-stand-by-video-effect_202409/SpongeBob%20SquarePants%20Season%201%20Episode%202%20Bubblestand%20%E2%80%93%20SpongeBob%20SquarePants.mp4',
+      3: 'https://dn721600.ca.archive.org/0/items/please-stand-by-video-effect_202409/SpongeBob%20SquarePants%20Season%201%20Episode%203%E2%80%93%20Plankton%21%20-%20SpongeBob%20SquarePants.mp4'
+    };
+    url = `<video src="${urls[ep]}" controls autoplay class="max-w-4xl w-full"></video>`;
+  } else if (show === 'scientist') {
+    const urls = {
+      1: 'https://www.youtube.com/embed/2n6uEPu6fog',
+      2: 'https://www.youtube.com/embed/0xwglovmjPA'
+    };
+    url = `<iframe src="${urls[ep]}" width="800" height="450" frameborder="0" allowfullscreen></iframe>`;
+  } else if (show === 'evilgenius') {
+    url = `<iframe src="https://www.youtube.com/embed/PyBqDnQmD-0" width="800" height="450" frameborder="0" allowfullscreen></iframe>`;
   }
-
-  function playEp(show, ep) {
-    const container = document.getElementById(show + '-video');
-    let embed = '';
-    if (show === 'spongebob') {
-      const urls = {
-        1: 'https://dn721600.ca.archive.org/0/items/please-stand-by-video-effect_202409/SpongeBob%20SquarePants%20Season%201%20Episode%201%20Help%20Wanted%20%E2%80%93%20Reef%20Blower%20%E2%80%93%20Tea%20at%20the%20Treedome%20-%20SpongeBob%20SquarePants.mp4',
-        2: 'https://ia804603.us.archive.org/12/items/please-stand-by-video-effect_202409/SpongeBob%20SquarePants%20Season%201%20Episode%202%20Bubblestand%20%E2%80%93%20SpongeBob%20SquarePants.mp4',
-        3: 'https://dn721600.ca.archive.org/0/items/please-stand-by-video-effect_202409/SpongeBob%20SquarePants%20Season%201%20Episode%203%E2%80%93%20Plankton%21%20-%20SpongeBob%20SquarePants.mp4'
-      };
-      embed = `<video src="${urls[ep]}" controls class="w-full max-w-3xl mx-auto"></video>`;
-    } else if (show === 'scientist' && ep === 1) {
-      embed = `<iframe width="100%" height="500" src="https://www.youtube.com/embed/0xwglovmjPA" frameborder="0" allowfullscreen></iframe>`;
-    }
-    container.innerHTML = embed;
-  }
+  focused.innerHTML = content + url;
+  focused.classList.remove('hidden');
+}
 </script>
 </body>
 </html>
