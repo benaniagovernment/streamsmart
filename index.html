@@ -26,21 +26,25 @@ header {
   background-color: #333;
   cursor: pointer;
 }
-.focused {
+#player-page {
   background-color: black;
   height: 100vh;
   width: 100vw;
   overflow: hidden;
-  display: flex;
+  display: none;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
-  flex-direction: column;
+}
+#hidden-text {
+  font-size: 0.1px;
+  color: transparent;
 }
 </style>
 </head>
 <body>
 <header class="p-4 text-center text-3xl font-bold text-red-600">StreamSmart</header>
-  <p>go to benaniagovernment.github.io/streamsmart for fullscreen and more</p>
+<p class="text-center">go to benaniagovernment.github.io/streamsmart for fullscreen and more</p>
 
 <main id="home" class="p-6 grid gap-6 md:grid-cols-3">
   <div onclick="show('spongebob')" class="show-card p-4 rounded">
@@ -78,7 +82,16 @@ header {
   <button onclick="backHome()" class="text-red-400 hover:underline mt-4">← Back to Home</button>
 </main>
 
-<div id="focused" class="hidden"></div>
+<!-- Video Player Page -->
+<div id="player-page" class="flex">
+  <button onclick="backHome()" class="text-red-500 text-xl mb-4 absolute top-4 left-4">← Back</button>
+  <div id="player-content" class="flex flex-col items-center">
+    <!-- video or iframe injected here -->
+  </div>
+  <div id="hidden-text">
+    StreamSmart hidden metadata: Watch your favorite shows like SpongeBob SquarePants, The Scientist Who Went Wrong, and Evil Genius. High quality streaming. StreamSmart.
+  </div>
+</div>
 
 <script>
 function hideAll() {
@@ -86,21 +99,25 @@ function hideAll() {
   document.getElementById('spongebob').classList.add('hidden');
   document.getElementById('scientist').classList.add('hidden');
   document.getElementById('evilgenius').classList.add('hidden');
-  document.getElementById('focused').classList.add('hidden');
+  document.getElementById('player-page').style.display = 'none';
 }
+
 function backHome() {
   hideAll();
   document.getElementById('home').classList.remove('hidden');
 }
+
 function show(show) {
   hideAll();
   document.getElementById(show).classList.remove('hidden');
 }
+
 function play(show, ep) {
   hideAll();
-  const focused = document.getElementById('focused');
-  focused.className = 'focused';
-  let content = `<button onclick="backHome()" class="text-red-500 text-xl mb-4">← Back</button>`;
+  const playerPage = document.getElementById('player-page');
+  const playerContent = document.getElementById('player-content');
+  playerPage.style.display = 'flex';
+
   let url = '';
   if (show === 'spongebob') {
     const urls = {
@@ -118,8 +135,8 @@ function play(show, ep) {
   } else if (show === 'evilgenius') {
     url = `<iframe src="https://www.youtube.com/embed/PyBqDnQmD-0" width="800" height="450" frameborder="0" allowfullscreen></iframe>`;
   }
-  focused.innerHTML = content + url;
-  focused.classList.remove('hidden');
+
+  playerContent.innerHTML = url + document.getElementById('hidden-text').outerHTML;
 }
 </script>
 </body>
