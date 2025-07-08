@@ -82,6 +82,12 @@ header {
   <button onclick="backHome()" class="text-red-400 hover:underline mt-4">← Back to Home</button>
 </main>
 
+<main id="ab le danc academ" class="p-6 hidden space-y-4">
+  <h2 class="text-2xl font-bold text-red-500">ab le danc academ</h2>
+  <div onclick="play('alda',1)" class="episode-card p-4 rounded">Show</div>
+  <button onclick="backHome()" class="text-red-400 hover:underline mt-4">← Back to Home</button>
+</main>
+
 <!-- Video Player Page -->
 <div id="player-page" class="flex">
   <button onclick="backHome()" class="text-red-500 text-xl mb-4 absolute top-4 left-4">← Back</button>
@@ -99,6 +105,7 @@ function hideAll() {
   document.getElementById('spongebob').classList.add('hidden');
   document.getElementById('scientist').classList.add('hidden');
   document.getElementById('evilgenius').classList.add('hidden');
+  document.getElementById('alda').classList.add('hidden');
   document.getElementById('player-page').style.display = 'none';
 }
 
@@ -134,7 +141,10 @@ function play(show, ep) {
     url = `<iframe src="${urls[ep]}" width="800" height="450" frameborder="0" allowfullscreen></iframe>`;
   } else if (show === 'evilgenius') {
     url = `<iframe src="https://www.youtube.com/embed/PyBqDnQmD-0" width="800" height="450" frameborder="0" allowfullscreen></iframe>`;
-  }
+  } else if (show === 'abda') {
+    const urls = {
+      1: 'https://www.youtube.com/embed/IY81SpNdyEk',
+    }
 
   playerContent.innerHTML = url + document.getElementById('hidden-text').outerHTML;
 }
