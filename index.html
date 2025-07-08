@@ -30,7 +30,10 @@ header {
   background-color: black;
   height: 100vh;
   width: 100vw;
-  overflow: hidden;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 50;
   display: none;
   flex-direction: column;
   justify-content: center;
@@ -39,6 +42,8 @@ header {
 #hidden-text {
   font-size: 0.1px;
   color: transparent;
+  position: absolute;
+  bottom: -9999px;
 }
 </style>
 </head>
@@ -46,7 +51,7 @@ header {
 <header class="p-4 text-center text-3xl font-bold text-red-600">StreamSmart</header>
 <p class="text-center">go to benaniagovernment.github.io/streamsmart for fullscreen and more</p>
 
-<main id="home" class="p-6 grid gap-6 md:grid-cols-3">
+<main id="home" class="p-6 grid gap-6 md:grid-cols-3 lg:grid-cols-4">
   <div onclick="show('spongebob')" class="show-card p-4 rounded">
     <h2 class="text-xl font-semibold">SpongeBob SquarePants</h2>
     <p>Underwater comedy adventures.</p>
@@ -59,13 +64,18 @@ header {
     <h2 class="text-xl font-semibold">Evil Genius</h2>
     <p>A shocking true story.</p>
   </div>
+  <!-- This card is now visible and points to the right content -->
+  <div onclick="show('alda')" class="show-card p-4 rounded">
+    <h2 class="text-xl font-semibold">ab le mil danc academ</h2>
+    <p>Watch the full show.</p>
+  </div>
 </main>
 
 <main id="spongebob" class="p-6 hidden space-y-4">
   <h2 class="text-2xl font-bold text-red-500">SpongeBob SquarePants</h2>
   <div onclick="play('spongebob',1)" class="episode-card p-4 rounded">Episode 1: Help Wanted / Reef Blower / Tea at the Treedome</div>
-  <div onclick="play('spongebob',2)" class="episode-card p-4 rounded">Episode 2: Bubblestand</div>
-  <div onclick="play('spongebob',3)" class="episode-card p-4 rounded">Episode 3: Plankton!</div>
+  <div onclick="play('spongebob',2)" class="episode-card p-4 rounded">Episode 2: Bubblestand / Ripped Pants</div>
+  <div onclick="play('spongebob',3)" class="episode-card p-4 rounded">Episode 3: Plankton! / Jellyfishing</div>
   <button onclick="backHome()" class="text-red-400 hover:underline mt-4">← Back to Home</button>
 </main>
 
@@ -82,16 +92,18 @@ header {
   <button onclick="backHome()" class="text-red-400 hover:underline mt-4">← Back to Home</button>
 </main>
 
-<main id="ab le danc academ" class="p-6 hidden space-y-4">
-  <h2 class="text-2xl font-bold text-red-500">ab le danc academ</h2>
+<!-- This section is now correctly set up with your requested name -->
+<!-- The id is 'alda' for the script, but the visible name is what you wanted -->
+<main id="alda" class="p-6 hidden space-y-4">
+  <h2 class="text-2xl font-bold text-red-500">ab le mil danc academ</h2>
   <div onclick="play('alda',1)" class="episode-card p-4 rounded">Show</div>
   <button onclick="backHome()" class="text-red-400 hover:underline mt-4">← Back to Home</button>
 </main>
 
 <!-- Video Player Page -->
 <div id="player-page" class="flex">
-  <button onclick="backHome()" class="text-red-500 text-xl mb-4 absolute top-4 left-4">← Back</button>
-  <div id="player-content" class="flex flex-col items-center">
+  <button onclick="backHome()" class="text-red-500 text-xl z-10 mb-4 absolute top-4 left-4">← Back</button>
+  <div id="player-content" class="w-full h-full flex justify-center items-center">
     <!-- video or iframe injected here -->
   </div>
   <div id="hidden-text">
@@ -106,7 +118,11 @@ function hideAll() {
   document.getElementById('scientist').classList.add('hidden');
   document.getElementById('evilgenius').classList.add('hidden');
   document.getElementById('alda').classList.add('hidden');
-  document.getElementById('player-page').style.display = 'none';
+  
+  const playerPage = document.getElementById('player-page');
+  const playerContent = document.getElementById('player-content');
+  playerPage.style.display = 'none';
+  playerContent.innerHTML = '';
 }
 
 function backHome() {
@@ -114,9 +130,9 @@ function backHome() {
   document.getElementById('home').classList.remove('hidden');
 }
 
-function show(show) {
+function show(showId) {
   hideAll();
-  document.getElementById(show).classList.remove('hidden');
+  document.getElementById(showId).classList.remove('hidden');
 }
 
 function play(show, ep) {
@@ -125,28 +141,33 @@ function play(show, ep) {
   const playerContent = document.getElementById('player-content');
   playerPage.style.display = 'flex';
 
-  let url = '';
+  let contentHtml = '';
   if (show === 'spongebob') {
     const urls = {
       1: 'https://dn721600.ca.archive.org/0/items/please-stand-by-video-effect_202409/SpongeBob%20SquarePants%20Season%201%20Episode%201%20Help%20Wanted%20%E2%80%93%20Reef%20Blower%20%E2%80%93%20Tea%20at%20the%20Treedome%20-%20SpongeBob%20SquarePants.mp4',
       2: 'https://ia804603.us.archive.org/12/items/please-stand-by-video-effect_202409/SpongeBob%20SquarePants%20Season%201%20Episode%202%20Bubblestand%20%E2%80%93%20SpongeBob%20SquarePants.mp4',
       3: 'https://dn721600.ca.archive.org/0/items/please-stand-by-video-effect_202409/SpongeBob%20SquarePants%20Season%201%20Episode%203%E2%80%93%20Plankton%21%20-%20SpongeBob%20SquarePants.mp4'
     };
-    url = `<video src="${urls[ep]}" controls autoplay class="max-w-4xl w-full"></video>`;
+    contentHtml = `<video src="${urls[ep]}" controls autoplay class="w-full max-w-4xl h-auto"></video>`;
   } else if (show === 'scientist') {
     const urls = {
-      1: 'https://www.youtube.com/embed/2n6uEPu6fog',
-      2: 'https://www.youtube.com/embed/0xwglovmjPA'
+      1: 'https://www.youtube.com/embed/2n6uEPu6fog?autoplay=1',
+      2: 'https://www.youtube.com/embed/0xwglovmjPA?autoplay=1'
     };
-    url = `<iframe src="${urls[ep]}" width="800" height="450" frameborder="0" allowfullscreen></iframe>`;
+    contentHtml = `<iframe src="${urls[ep]}" class="w-11/12 h-4/5 md:w-4/5 md:h-4/5" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe>`;
   } else if (show === 'evilgenius') {
-    url = `<iframe src="https://www.youtube.com/embed/PyBqDnQmD-0" width="800" height="450" frameborder="0" allowfullscreen></iframe>`;
-  } else if (show === 'abda') {
+    contentHtml = `<iframe src="https://www.youtube.com/embed/PyBqDnQmD-0?autoplay=1" class="w-11/12 h-4/5 md:w-4/5 md:h-4/5" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe>`;
+  // THE FIX: The missing closing brace "}" after the 'evilgenius' block is now correctly in place.
+  // This was the error that broke everything in my last response. It's fixed now.
+  } else if (show === 'alda') { 
     const urls = {
-      1: 'https://www.youtube.com/embed/IY81SpNdyEk',
-    }
+      1: 'https://www.youtube.com/embed/IY81SpNdyEk?autoplay=1',
+    };
+    contentHtml = `<iframe src="${urls[ep]}" class="w-11/12 h-4/5 md:w-4/5 md:h-4/5" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe>`;
+  }
 
-  playerContent.innerHTML = url + document.getElementById('hidden-text').outerHTML;
+  // This line is now correctly executed for every show.
+  playerContent.innerHTML = contentHtml + document.getElementById('hidden-text').outerHTML;
 }
 </script>
 </body>
